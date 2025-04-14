@@ -13,7 +13,10 @@ export default function OrgPage() {
 
   const updateEmployee = (index: number, field: keyof Employee, value: string) => {
     const updated = [...employees]
-    updated[index] = { ...updated[index], [field]: value }
+    updated[index] = {
+      ...updated[index],
+      [field]: value
+    }
     setEmployees(updated)
   }
 
