@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import orgConfig from '../../org.config.json'
+import orgConfig from '../../../org.config.json'
 
 export default function OnboardingForm() {
   const router = useRouter()
