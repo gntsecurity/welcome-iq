@@ -6,32 +6,41 @@ const supabase = createClient(
 )
 
 export const onRequest = async ({ request }: { request: Request }) => {
-  if (request.method === 'GET') {
-    const { data, error } = await supabase
-      .from('logs')
-      .select('*')
-      .order('timestamp', { ascending: false })
-
-    return new Response(JSON.stringify({ logs: data || [], error }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: error ? 500 : 200
-    })
-  }
-
   if (request.method === 'POST') {
     try {
       const body = await request.json()
 
-      const { error } = await supabase.from('logs').insert(body)
+      const { company, person_visited, reason, metadata, created_by, type } = body
 
-      return new Response(JSON.stringify({ success: !error, error }), {
+      if (!company || !person_visited || !created_by) {
+        return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 400
+        })
+      }
+
+      const { error } = await supabase.from('logs').insert([
+        {
+          timestamp: new Date().toISOString(),
+          company,
+          person_visited,
+          reason: reason || '',
+          metadata: metadata || {},
+          created_by,
+          type: type || 'onboard'
+        }
+      ])
+
+      if (error) throw error
+
+      return new Response(JSON.stringify({ success: true }), {
         headers: { 'Content-Type': 'application/json' },
-        status: error ? 500 : 200
+        status: 200
       })
-    } catch (err: any) {
-      return new Response(JSON.stringify({ error: 'Invalid request', detail: err.message }), {
+    } catch (e) {
+      return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
         headers: { 'Content-Type': 'application/json' },
-        status: 400
+        status: 500
       })
     }
   }
