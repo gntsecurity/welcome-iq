@@ -5,7 +5,7 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrYXhlZmlncGp1eGJldm1kcWRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzUzMjMsImV4cCI6MjA2MDIxMTMyM30.tpKK42gVF6dpR52hOkqdyi-xrHfxLTes9tAXkatayfM'
 )
 
-export const onRequest = async ({ request }: { request: Request }): Promise<Response> => {
+export const onRequest = async ({ request }: { request: Request }) => {
   if (request.method === 'GET') {
     const { data, error } = await supabase
       .from('employees')
