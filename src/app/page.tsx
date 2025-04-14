@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import HeaderDesktop from '@/components/HeaderDesktop'
-import FooterDesktop from '@/components/FooterDesktop'
+import HeaderDesktop from '../components/HeaderDesktop'
+import FooterDesktop from '../components/FooterDesktop'
 
 export default function LandingPage() {
   const router = useRouter()

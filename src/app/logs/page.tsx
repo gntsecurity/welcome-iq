@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import HeaderDesktop from '@/components/HeaderDesktop'
-import FooterDesktop from '@/components/FooterDesktop'
+import HeaderDesktop from '../components/HeaderDesktop'
+import FooterDesktop from '../components/FooterDesktop'
 import { motion } from 'framer-motion'
 
 type LogEntry = {

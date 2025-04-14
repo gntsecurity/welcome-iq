@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import HeaderDesktop from '@/components/HeaderDesktop'
-import FooterDesktop from '@/components/FooterDesktop'
+import HeaderDesktop from '../../components/HeaderDesktop'
+import FooterDesktop from '../../components/FooterDesktop'
 
 export default function OrgConfigPage() {
   const [orgName, setOrgName] = useState('')
