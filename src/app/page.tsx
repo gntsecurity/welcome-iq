@@ -1,95 +1,75 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
 
-export default function Home() {
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
+import HeaderDesktop from '@/components/HeaderDesktop'
+import FooterDesktop from '@/components/FooterDesktop'
+
+export default function LandingPage() {
+  const router = useRouter()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsMobile(true)
+      router.push('/onboard')
+    }
+  }, [router])
+
+  if (isMobile) return null
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex flex-col text-gray-900 font-sans">
+      <HeaderDesktop />
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <main className="flex-grow flex items-center justify-center px-6 md:px-12 py-12">
+        <AnimatePresence>
+          <motion.div
+            key="landing-hero"
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.98 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="bg-white/80 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-3xl px-10 py-14 max-w-3xl w-full text-center space-y-8"
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
+            <div className="space-y-3">
+              <span className="inline-block text-xs font-semibold tracking-wide text-blue-700 bg-blue-100 rounded-full px-3 py-1 uppercase">
+                Admin Portal
+              </span>
+              <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                Welcome-IQ Admin
+              </h1>
+              <p className="text-gray-600 text-base md:text-lg max-w-xl mx-auto">
+                Effortless contractor onboarding and facility compliance. Designed for security, speed, and peace of mind.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+              <a
+                href="/org"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl text-sm"
+              >
+                Configure Organization
+              </a>
+              <a
+                href="/admin"
+                className="border border-gray-300 hover:border-gray-400 text-gray-800 font-semibold px-6 py-3 rounded-xl text-sm"
+              >
+                Go to Dashboard
+              </a>
+              <a
+                href="/onboard"
+                className="text-blue-600 border border-blue-200 hover:border-blue-300 hover:text-blue-700 font-semibold px-6 py-3 rounded-xl text-sm"
+              >
+                Contractor Sign-In
+              </a>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      <FooterDesktop />
     </div>
-  );
+  )
 }

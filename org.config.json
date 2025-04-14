@@ -1,0 +1,26 @@
+{
+  "orgName": "",
+  "primaryColor": "#1D4ED8",
+  "employees": [
+    {
+      "name": "Michael Doyle",
+      "title": "Plant Manager"
+    },
+    {
+      "name": "Pete Yuppa",
+      "title": "Engineering Manager"
+    },
+    {
+      "name": "Scott Bishop",
+      "title": "Production Manager"
+    },
+    {
+      "name": "Jordan Williams",
+      "title": "EH&S"
+    },
+    {
+      "name": "Denise Cobey",
+      "title": "Human Resources"
+    }
+  ]
+}
