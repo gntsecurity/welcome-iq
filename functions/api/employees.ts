@@ -1,13 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
+import type { PagesFunction } from '@cloudflare/workers-types'
 
 const supabase = createClient(
   'https://xkaxefigpjuxbevmdqdf.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrYXhlZmlncGp1eGJldm1kcWRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzUzMjMsImV4cCI6MjA2MDIxMTMyM30.tpKK42gVF6dpR52hOkqdyi-xrHfxLTes9tAXkatayfM'
 )
 
-export async function onRequest(context: { request: Request }) {
-  const { request } = context
-
+export const onRequest: PagesFunction = async ({ request }) => {
   if (request.method === 'GET') {
     const { data, error } = await supabase
       .from('employees')
@@ -22,6 +21,7 @@ export async function onRequest(context: { request: Request }) {
 
   if (request.method === 'POST') {
     const body = await request.json()
+
     if (!Array.isArray(body)) {
       return new Response(JSON.stringify({ error: 'Invalid payload' }), {
         headers: { 'Content-Type': 'application/json' },

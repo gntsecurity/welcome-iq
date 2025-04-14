@@ -1,23 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import HeaderDesktop from '../../components/HeaderDesktop'
 import FooterDesktop from '../../components/FooterDesktop'
 import { motion } from 'framer-motion'
+
+type Employee = {
+  id: number
+  name: string
+  title: string
+}
 
 export default function OnboardPage() {
   const [form, setForm] = useState({
     name: '',
     company: '',
     email: '',
-    visiting: '',
-    signature: ''
+    visiting: ''
   })
 
+  const [employees, setEmployees] = useState<Employee[]>([])
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    fetch('/api/employees')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data.employees)) setEmployees(data.employees)
+      })
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
@@ -27,7 +41,8 @@ export default function OnboardPage() {
 
     const logEntry = {
       ...form,
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
+      signature: form.name
     }
 
     const res = await fetch('/api/logs', {
@@ -58,6 +73,14 @@ export default function OnboardPage() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="w-full max-w-xl bg-gray-50 rounded-3xl shadow-2xl p-10 md:p-12 space-y-8"
         >
+          <div className="text-center space-y-2">
+            <span className="inline-block text-xs font-semibold tracking-wider text-blue-700 bg-blue-100 rounded-full px-3 py-1 uppercase">
+              Step 1 of 4
+            </span>
+            <h1 className="text-2xl font-extrabold">Contractor Onboarding</h1>
+            <p className="text-sm text-gray-500">Please fill out the form to begin onboarding.</p>
+          </div>
+
           {submitted ? (
             <div className="text-center space-y-4">
               <h2 className="text-2xl font-bold">Thank you!</h2>
@@ -102,27 +125,21 @@ export default function OnboardPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Who are you visiting?</label>
-                <input
+                <label className="block text-sm font-medium mb-1">Who are you here to see?</label>
+                <select
                   name="visiting"
-                  type="text"
                   value={form.visiting}
                   onChange={handleChange}
                   required
-                  className="w-full border rounded px-4 py-2"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Signature</label>
-                <input
-                  name="signature"
-                  type="text"
-                  value={form.signature}
-                  onChange={handleChange}
-                  required
-                  className="w-full border rounded px-4 py-2"
-                />
+                  className="w-full border rounded px-4 py-2 bg-white"
+                >
+                  <option value="">Select employee</option>
+                  {employees.map(emp => (
+                    <option key={emp.id} value={emp.name}>
+                      {emp.name} — {emp.title}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <button
