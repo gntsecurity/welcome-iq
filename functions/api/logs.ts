@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import type { RequestContext } from '@cloudflare/workers-types'
 
 const supabase = createClient(
   'https://xkaxefigpjuxbevmdqdf.supabase.co',
