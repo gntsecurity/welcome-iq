@@ -19,13 +19,21 @@ export const onRequest = async ({ request }: { request: Request }) => {
   }
 
   if (request.method === 'POST') {
-    const body = await request.json()
-    const { error } = await supabase.from('logs').insert(body)
+    try {
+      const body = await request.json()
 
-    return new Response(JSON.stringify({ success: !error, error }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: error ? 500 : 200
-    })
+      const { error } = await supabase.from('logs').insert(body)
+
+      return new Response(JSON.stringify({ success: !error, error }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: error ? 500 : 200
+      })
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: 'Invalid request', detail: err.message }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 400
+      })
+    }
   }
 
   return new Response('Method Not Allowed', { status: 405 })
