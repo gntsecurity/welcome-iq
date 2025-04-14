@@ -5,33 +5,52 @@ import { motion } from 'framer-motion'
 import HeaderDesktop from '../../components/HeaderDesktop'
 import FooterDesktop from '../../components/FooterDesktop'
 
+type Employee = {
+  name: string
+  title: string
+}
+
 export default function OrgConfigPage() {
   const [orgName, setOrgName] = useState('')
   const [primaryColor, setPrimaryColor] = useState('#1D4ED8')
-  const [employees, setEmployees] = useState([{ name: '', title: '' }])
+  const [employees, setEmployees] = useState<Employee[]>([])
+
+  useEffect(() => {
+    fetch('/api/employees')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.employees)) {
+          setEmployees(data.employees)
+        }
+      })
+  }, [])
 
   const addEmployee = () => {
     setEmployees([...employees, { name: '', title: '' }])
   }
 
-  const updateEmployee = (index: number, field: string, value: string) => {
+  const updateEmployee = (index: number, field: keyof Employee, value: string) => {
     const updated = [...employees]
-    updated[index][field] = value
+    updated[index] = { ...updated[index], [field]: value }
     setEmployees(updated)
   }
 
-  const downloadConfig = () => {
+  const saveConfig = async () => {
     const config = {
       orgName,
       primaryColor,
       employees: employees.filter(e => e.name.trim() && e.title.trim())
     }
 
-    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' })
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = 'org.config.json'
-    link.click()
+    const res = await fetch('/api/employees', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config.employees)
+    })
+
+    if (!res.ok) {
+      alert('Failed to save employee list.')
+    }
   }
 
   return (
@@ -111,10 +130,10 @@ export default function OrgConfigPage() {
             </div>
 
             <button
-              onClick={downloadConfig}
+              onClick={saveConfig}
               className="w-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-3 rounded-xl text-base tracking-tight shadow-lg"
             >
-              Download Config
+              Save to Supabase
             </button>
           </div>
         </motion.div>

@@ -6,6 +6,7 @@ import FooterDesktop from '../../components/FooterDesktop'
 import { motion } from 'framer-motion'
 
 type LogEntry = {
+  id: string
   name: string
   company: string
   email: string
@@ -19,19 +20,19 @@ export default function LogsPage() {
   const [confirmClear, setConfirmClear] = useState(false)
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('contractor-logs') || '[]')
-    setLogs(saved)
+    fetch('/api/logs')
+      .then(res => res.json())
+      .then(setLogs)
+      .catch(console.error)
   }, [])
 
-  const deleteEntry = (index: number) => {
-    const updated = [...logs]
-    updated.splice(index, 1)
-    localStorage.setItem('contractor-logs', JSON.stringify(updated))
-    setLogs(updated)
+  const deleteEntry = async (id: string) => {
+    await fetch(`/api/logs?id=${id}`, { method: 'DELETE' })
+    setLogs(logs.filter(l => l.id !== id))
   }
 
-  const clearAllLogs = () => {
-    localStorage.removeItem('contractor-logs')
+  const clearAllLogs = async () => {
+    await fetch('/api/logs', { method: 'DELETE' })
     setLogs([])
     setConfirmClear(false)
   }
@@ -102,8 +103,8 @@ export default function LogsPage() {
                     </td>
                   </tr>
                 ) : (
-                  logs.map((log, i) => (
-                    <tr key={i} className="hover:bg-gray-50">
+                  logs.map((log) => (
+                    <tr key={log.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">{log.name}</td>
                       <td className="px-6 py-4">{log.company}</td>
                       <td className="px-6 py-4">{log.email}</td>
@@ -112,7 +113,7 @@ export default function LogsPage() {
                       <td className="px-6 py-4">{log.signature}</td>
                       <td className="px-6 py-4 text-right">
                         <button
-                          onClick={() => deleteEntry(i)}
+                          onClick={() => deleteEntry(log.id)}
                           className="text-red-500 hover:text-red-700 text-xs font-medium"
                         >
                           Delete

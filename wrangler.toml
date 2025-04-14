@@ -1,0 +1,14 @@
+name = "welcome-iq-worker"
+main = "src/worker.ts"
+compatibility_date = "2025-04-14"
+compatibility_flags = [ "nodejs_compat" ]
+
+[vars]
+SUPABASE_URL = "https://your-project-id.supabase.co"
+SUPABASE_SERVICE_ROLE = "your-service-role-key"
+
+[build]
+command = "npm run build"
+
+[deploy]
+account_id = "your-cloudflare-account-id"

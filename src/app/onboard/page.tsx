@@ -1,70 +1,143 @@
 'use client'
 
 import { useState } from 'react'
-import orgConfig from '../../../org.config.json'
+import HeaderDesktop from '../../components/HeaderDesktop'
+import FooterDesktop from '../../components/FooterDesktop'
+import { motion } from 'framer-motion'
 
-type Employee = {
-  name: string
-  title: string
-}
+export default function OnboardPage() {
+  const [form, setForm] = useState({
+    name: '',
+    company: '',
+    email: '',
+    visiting: '',
+    signature: ''
+  })
 
-export default function OrgPage() {
-  const [employees, setEmployees] = useState<Employee[]>(orgConfig.employees)
+  const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const updateEmployee = (index: number, field: keyof Employee, value: string) => {
-    const updated = [...employees]
-    updated[index] = {
-      ...updated[index],
-      [field]: value
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    const logEntry = {
+      ...form,
+      date: new Date().toISOString()
     }
-    setEmployees(updated)
-  }
 
-  const addEmployee = () => {
-    setEmployees([...employees, { name: '', title: '' }])
-  }
+    const res = await fetch('/api/logs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(logEntry)
+    })
 
-  const removeEmployee = (index: number) => {
-    const updated = [...employees]
-    updated.splice(index, 1)
-    setEmployees(updated)
+    if (res.ok) {
+      setSubmitted(true)
+    } else {
+      alert('Failed to save log.')
+    }
+
+    setLoading(false)
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-3xl font-bold mb-6">Organization Configuration</h1>
-      <div className="space-y-4">
-        {employees.map((employee, index) => (
-          <div key={index} className="bg-white p-4 rounded-lg shadow-md space-y-2">
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={employee.name}
-              onChange={(e) => updateEmployee(index, 'name', e.target.value)}
-              className="w-full border rounded px-3 py-2"
-            />
-            <input
-              type="text"
-              placeholder="Job Title"
-              value={employee.title}
-              onChange={(e) => updateEmployee(index, 'title', e.target.value)}
-              className="w-full border rounded px-3 py-2"
-            />
-            <button
-              onClick={() => removeEmployee(index)}
-              className="text-red-600 hover:underline text-sm"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
-      </div>
-      <button
-        onClick={addEmployee}
-        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
-      >
-        Add Employee
-      </button>
-    </main>
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col">
+      <HeaderDesktop />
+
+      <main className="flex-grow flex justify-center items-center px-6 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="w-full max-w-xl bg-gray-50 rounded-3xl shadow-2xl p-10 md:p-12 space-y-8"
+        >
+          {submitted ? (
+            <div className="text-center space-y-4">
+              <h2 className="text-2xl font-bold">Thank you!</h2>
+              <p className="text-gray-600">Your onboarding log has been submitted.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-1">Full Name</label>
+                <input
+                  name="name"
+                  type="text"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full border rounded px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Company</label>
+                <input
+                  name="company"
+                  type="text"
+                  value={form.company}
+                  onChange={handleChange}
+                  required
+                  className="w-full border rounded px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Email</label>
+                <input
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full border rounded px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Who are you visiting?</label>
+                <input
+                  name="visiting"
+                  type="text"
+                  value={form.visiting}
+                  onChange={handleChange}
+                  required
+                  className="w-full border rounded px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Signature</label>
+                <input
+                  name="signature"
+                  type="text"
+                  value={form.signature}
+                  onChange={handleChange}
+                  required
+                  className="w-full border rounded px-4 py-2"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-base tracking-tight shadow"
+              >
+                {loading ? 'Submitting...' : 'Submit'}
+              </button>
+            </form>
+          )}
+        </motion.div>
+      </main>
+
+      <FooterDesktop />
+    </div>
   )
 }

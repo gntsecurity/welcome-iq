@@ -14,9 +14,8 @@ export default function PolicyAgreement() {
     setMounted(true)
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!signature.trim() || !date.trim()) return
 
     const formData = localStorage.getItem('contractor-info')
@@ -32,9 +31,11 @@ export default function PolicyAgreement() {
       signature
     }
 
-    const existingLogs = JSON.parse(localStorage.getItem('contractor-logs') || '[]')
-    const updatedLogs = [...existingLogs, newEntry]
-    localStorage.setItem('contractor-logs', JSON.stringify(updatedLogs))
+    await fetch('/api/logs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newEntry)
+    })
 
     localStorage.removeItem('contractor-info')
     localStorage.removeItem('contractor-signature')

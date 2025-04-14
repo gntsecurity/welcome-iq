@@ -3,20 +3,34 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
+type Contractor = {
+  name: string
+  company: string
+  visiting: string
+}
+
 export default function CompletionScreen() {
-  const [contractor, setContractor] = useState<{ name: string, company: string, visiting: string } | null>(null)
+  const [contractor, setContractor] = useState<Contractor | null>(null)
 
   useEffect(() => {
-    const data = localStorage.getItem('contractor-logs')
-    if (data) {
-      const logs = JSON.parse(data)
-      const last = logs[logs.length - 1]
-      setContractor({
-        name: last.name,
-        company: last.company,
-        visiting: last.visiting
-      })
+    const fetchLatestLog = async () => {
+      try {
+        const res = await fetch('/api/logs?limit=1&order=desc')
+        const data = await res.json()
+        if (data && data.length > 0) {
+          const last = data[0]
+          setContractor({
+            name: last.name,
+            company: last.company,
+            visiting: last.visiting
+          })
+        }
+      } catch (err) {
+        console.error('Failed to fetch latest log:', err)
+      }
     }
+
+    fetchLatestLog()
   }, [])
 
   return (
