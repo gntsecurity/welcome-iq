@@ -9,10 +9,18 @@ export async function onRequest({ env }: { env: Record<string, string> }) {
     }
   })
 
-  const data = await response.text()
+  const raw = await response.text()
 
-  return new Response(data, {
-    status: response.status,
-    headers: { 'Content-Type': 'application/json' }
-  })
+  try {
+    const data = JSON.parse(raw)
+    return new Response(JSON.stringify({ employees: data }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (e) {
+    return new Response(JSON.stringify({ error: 'Invalid JSON from Supabase' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
 }
