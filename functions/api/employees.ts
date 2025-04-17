@@ -25,8 +25,9 @@ export const onRequest = async ({ request, env }: { request: Request, env: Recor
       })
     }
 
-    await supabase.from('employees').delete().neq('id', 0)
-    const { error } = await supabase.from('employees').insert(body)
+    const { error } = await supabase
+      .from('employees')
+      .upsert(body, { onConflict: 'email' })
 
     return new Response(JSON.stringify({ success: !error, error }), {
       headers: { 'Content-Type': 'application/json' },
