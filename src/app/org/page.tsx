@@ -55,8 +55,12 @@ export default function OrgConfigPage() {
       body: JSON.stringify(payload)
     })
 
-    if (!res.ok) {
-      alert('Failed to save employee list.')
+    const result = await res.json()
+
+    if (res.ok && result.success) {
+      alert('Team saved to Supabase!')
+    } else {
+      alert(`Error: ${result?.error || 'Failed to save employee list.'}`)
     }
   }
 
