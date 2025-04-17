@@ -8,6 +8,9 @@ import FooterDesktop from '../../components/FooterDesktop'
 type Employee = {
   name: string
   title: string
+  email?: string
+  phone?: string
+  department?: string
 }
 
 export default function OrgConfigPage() {
@@ -26,7 +29,7 @@ export default function OrgConfigPage() {
   }, [])
 
   const addEmployee = () => {
-    setEmployees([...employees, { name: '', title: '' }])
+    setEmployees([...employees, { name: '', title: '', email: '', phone: '', department: '' }])
   }
 
   const updateEmployee = (index: number, field: keyof Employee, value: string) => {
@@ -36,16 +39,20 @@ export default function OrgConfigPage() {
   }
 
   const saveConfig = async () => {
-    const config = {
-      orgName,
-      primaryColor,
-      employees: employees.filter(e => e.name.trim() && e.title.trim())
-    }
+    const payload = employees
+      .filter(e => e.name.trim() && e.title.trim())
+      .map(e => ({
+        name: e.name,
+        title: e.title,
+        email: e.email || '',
+        phone: e.phone || '',
+        department: e.department || ''
+      }))
 
     const res = await fetch('/api/employees', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(config.employees)
+      body: JSON.stringify(payload)
     })
 
     if (!res.ok) {
@@ -102,20 +109,27 @@ export default function OrgConfigPage() {
               <label className="block font-medium text-sm text-gray-700 mb-2">Team Members</label>
               <div className="space-y-3">
                 {employees.map((emp, i) => (
-                  <div key={i} className="flex gap-3">
+                  <div key={i} className="grid grid-cols-2 gap-3 md:grid-cols-3">
                     <input
                       type="text"
                       placeholder="Name"
                       value={emp.name}
                       onChange={(e) => updateEmployee(i, 'name', e.target.value)}
-                      className="flex-1 border border-gray-300 rounded-lg px-4 py-2"
+                      className="border border-gray-300 rounded-lg px-4 py-2"
                     />
                     <input
                       type="text"
                       placeholder="Title"
                       value={emp.title}
                       onChange={(e) => updateEmployee(i, 'title', e.target.value)}
-                      className="flex-1 border border-gray-300 rounded-lg px-4 py-2"
+                      className="border border-gray-300 rounded-lg px-4 py-2"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Department"
+                      value={emp.department || ''}
+                      onChange={(e) => updateEmployee(i, 'department', e.target.value)}
+                      className="border border-gray-300 rounded-lg px-4 py-2"
                     />
                   </div>
                 ))}

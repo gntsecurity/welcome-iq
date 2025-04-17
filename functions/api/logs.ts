@@ -1,11 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  'https://xkaxefigpjuxbevmdqdf.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhrYXhlZmlncGp1eGJldm1kcWRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzUzMjMsImV4cCI6MjA2MDIxMTMyM30.tpKK42gVF6dpR52hOkqdyi-xrHfxLTes9tAXkatayfM'
-)
+export const onRequest = async ({ request, env }: { request: Request, env: Record<string, string> }) => {
+  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY)
 
-export const onRequest = async ({ request }: { request: Request }) => {
   if (request.method === 'POST') {
     try {
       const body = await request.json()
