@@ -55,12 +55,20 @@ export default function OrgConfigPage() {
       body: JSON.stringify(payload)
     })
 
-    const result = await res.json()
+    let result = null
+
+    try {
+      result = await res.json()
+    } catch {
+      alert('Error: invalid response')
+      return
+    }
 
     if (res.ok && result.success) {
       alert('Team saved to Supabase!')
     } else {
-      alert(`Error: ${result?.error || 'Failed to save employee list.'}`)
+      const msg = typeof result.error === 'string' ? result.error : 'Failed to save employee list.'
+      alert(`Error: ${msg}`)
     }
   }
 

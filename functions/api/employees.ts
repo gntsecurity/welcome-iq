@@ -25,9 +25,14 @@ export const onRequest = async ({ request, env }: { request: Request, env: Recor
       })
     }
 
+    const cleanBody = body.map((e: any) => ({
+      ...e,
+      email: e.email || `${e.name.toLowerCase().replace(/\s+/g, '')}@placeholder.local`
+    }))
+
     const { error } = await supabase
       .from('employees')
-      .upsert(body, { onConflict: 'email' })
+      .upsert(cleanBody, { onConflict: 'email' })
 
     return new Response(JSON.stringify({ success: !error, error }), {
       headers: { 'Content-Type': 'application/json' },

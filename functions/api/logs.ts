@@ -7,9 +7,9 @@ export const onRequest = async ({ request, env }: { request: Request, env: Recor
     try {
       const body = await request.json()
 
-      const { company, person_visited, reason, metadata, created_by, type } = body
+      const { company, visiting, reason, email, date, signature } = body
 
-      if (!company || !person_visited || !created_by) {
+      if (!company || !visiting || !signature) {
         return new Response(JSON.stringify({ error: 'Missing required fields' }), {
           headers: { 'Content-Type': 'application/json' },
           status: 400
@@ -18,13 +18,13 @@ export const onRequest = async ({ request, env }: { request: Request, env: Recor
 
       const { error } = await supabase.from('logs').insert([
         {
-          timestamp: new Date().toISOString(),
+          timestamp: date || new Date().toISOString(),
           company,
-          person_visited,
+          person_visited: visiting,
           reason: reason || '',
-          metadata: metadata || {},
-          created_by,
-          type: type || 'onboard'
+          metadata: { email },
+          created_by: signature,
+          type: 'onboard'
         }
       ])
 
