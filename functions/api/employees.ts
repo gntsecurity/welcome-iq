@@ -1,24 +1,25 @@
+import { createClient } from '@supabase/supabase-js'
+
 export async function onRequest({ request, env }: { request: Request, env: Record<string, string> }) {
-  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = env
+  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY)
 
   if (request.method === 'POST') {
     try {
       const body = await request.json()
 
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/employees`, {
-        method: 'POST',
-        headers: {
-          apikey: SUPABASE_SERVICE_ROLE_KEY,
-          authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-          'Content-Type': 'application/json',
-          prefer: 'return=minimal'
-        },
-        body: JSON.stringify(body)
-      })
+      if (!Array.isArray(body)) {
+        return new Response(JSON.stringify({ error: 'Payload must be an array of employees' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        })
+      }
 
-      if (!response.ok) {
-        const error = await response.text()
-        return new Response(JSON.stringify({ error }), {
+      const { error } = await supabase
+        .from('employees')
+        .upsert(body, { onConflict: ['name'] }) // Or use 'email' if emails are more reliable
+
+      if (error) {
+        return new Response(JSON.stringify({ error: error.message }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
         })
@@ -28,8 +29,8 @@ export async function onRequest({ request, env }: { request: Request, env: Recor
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       })
-    } catch (e) {
-      return new Response(JSON.stringify({ error: 'Unexpected server error' }), {
+    } catch {
+      return new Response(JSON.stringify({ error: 'Unexpected error' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       })
@@ -37,28 +38,19 @@ export async function onRequest({ request, env }: { request: Request, env: Recor
   }
 
   if (request.method === 'GET') {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/employees?select=*`, {
-      headers: {
-        apikey: SUPABASE_SERVICE_ROLE_KEY,
-        authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-        accept: 'application/json'
-      }
-    })
+    const { data, error } = await supabase.from('employees').select('*')
 
-    const raw = await response.text()
-
-    try {
-      const data = JSON.parse(raw)
-      return new Response(JSON.stringify({ employees: data }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      })
-    } catch (e) {
-      return new Response(JSON.stringify({ error: 'Invalid JSON from Supabase' }), {
+    if (error) {
+      return new Response(JSON.stringify({ error: error.message }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       })
     }
+
+    return new Response(JSON.stringify({ employees: data }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
   }
 
   return new Response('Method not allowed', { status: 405 })
