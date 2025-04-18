@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 type Contractor = {
@@ -10,6 +11,7 @@ type Contractor = {
 }
 
 export default function CompletionScreen() {
+  const router = useRouter()
   const [contractor, setContractor] = useState<Contractor | null>(null)
 
   useEffect(() => {
@@ -20,9 +22,9 @@ export default function CompletionScreen() {
         if (data && data.length > 0) {
           const last = data[0]
           setContractor({
-            name: last.name,
+            name: last.metadata?.name || '',
             company: last.company,
-            visiting: last.visiting
+            visiting: last.person_visited
           })
         }
       } catch (err) {
@@ -31,7 +33,13 @@ export default function CompletionScreen() {
     }
 
     fetchLatestLog()
-  }, [])
+
+    const timer = setTimeout(() => {
+      router.push('/onboard')
+    }, 15000)
+
+    return () => clearTimeout(timer)
+  }, [router])
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-6 py-16">
