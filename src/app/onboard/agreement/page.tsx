@@ -110,7 +110,7 @@ export default function PolicyAgreement() {
                 type="submit"
                 className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl tracking-tight shadow-lg"
               >
-                I Agree and Continue
+                I Agree and Complete
               </button>
             </form>
           </motion.div>

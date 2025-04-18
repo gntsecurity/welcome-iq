@@ -20,7 +20,6 @@ export default function OnboardPage() {
   })
 
   const [employees, setEmployees] = useState<Employee[]>([])
-  const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -35,31 +34,10 @@ export default function OnboardPage() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-
-    const logEntry = {
-      ...form,
-      date: new Date().toISOString(),
-      signature: form.name
-    }
-
-    const res = await fetch('/api/logs', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(logEntry)
-    })
-
-    if (res.ok) {
-      setSubmitted(true)
-    } else {
-      alert('Failed to save log.')
-    }
-
-    setLoading(false)
+    localStorage.setItem('contractor-info', JSON.stringify(form))
+    window.location.href = '/onboard/video'
   }
 
   return (
@@ -81,76 +59,69 @@ export default function OnboardPage() {
             <p className="text-sm text-gray-500">Please fill out the form to begin onboarding.</p>
           </div>
 
-          {submitted ? (
-            <div className="text-center space-y-4">
-              <h2 className="text-2xl font-bold">Thank you!</h2>
-              <p className="text-gray-600">Your onboarding log has been submitted.</p>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium mb-1">Full Name</label>
+              <input
+                name="name"
+                type="text"
+                value={form.name}
+                onChange={handleChange}
+                required
+                className="w-full border rounded px-4 py-2"
+              />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-1">Full Name</label>
-                <input
-                  name="name"
-                  type="text"
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full border rounded px-4 py-2"
-                />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Company</label>
-                <input
-                  name="company"
-                  type="text"
-                  value={form.company}
-                  onChange={handleChange}
-                  required
-                  className="w-full border rounded px-4 py-2"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Company</label>
+              <input
+                name="company"
+                type="text"
+                value={form.company}
+                onChange={handleChange}
+                required
+                className="w-full border rounded px-4 py-2"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Email</label>
-                <input
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full border rounded px-4 py-2"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Email</label>
+              <input
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                className="w-full border rounded px-4 py-2"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Who are you here to see?</label>
-                <select
-                  name="visiting"
-                  value={form.visiting}
-                  onChange={handleChange}
-                  required
-                  className="w-full border rounded px-4 py-2 bg-white"
-                >
-                  <option value="">Select employee</option>
-                  {employees.map(emp => (
-                    <option key={emp.id} value={emp.name}>
-                      {emp.name} — {emp.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-base tracking-tight shadow"
+            <div>
+              <label className="block text-sm font-medium mb-1">Who are you here to see?</label>
+              <select
+                name="visiting"
+                value={form.visiting}
+                onChange={handleChange}
+                required
+                className="w-full border rounded px-4 py-2 bg-white"
               >
-                {loading ? 'Submitting...' : 'Submit'}
-              </button>
-            </form>
-          )}
+                <option value="">Select employee</option>
+                {employees.map(emp => (
+                  <option key={emp.id} value={emp.name}>
+                    {emp.name} — {emp.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-base tracking-tight shadow"
+            >
+              Continue to Safety Video
+            </button>
+          </form>
         </motion.div>
       </main>
 
