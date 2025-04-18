@@ -16,7 +16,7 @@ export async function onRequest({ request, env }: { request: Request, env: Recor
 
       const { error } = await supabase
         .from('employees')
-        .upsert(body, { onConflict: ['name'] }) // Or use 'email' if emails are more reliable
+        .upsert(body, { onConflict: 'name' })
 
       if (error) {
         return new Response(JSON.stringify({ error: error.message }), {
