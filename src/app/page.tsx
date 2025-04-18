@@ -69,7 +69,7 @@ export default function LandingPage() {
             </div>
 
             <div className="pt-6 text-xs text-gray-400 tracking-wide">
-              Built for Angstrom Fiber | Powered by Supabase + Cloudflare Workers
+              Built for Angstrom Fiber Englewood | Powered by Supabase + Cloudflare Workers
             </div>
           </motion.div>
         </AnimatePresence>
