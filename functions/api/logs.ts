@@ -6,12 +6,12 @@ export const onRequest = async ({ request, env }: { request: Request, env: Recor
   if (request.method === 'POST') {
     try {
       const body = await request.json()
-      const { company, visiting, reason, email, date, signature } = body
+      const { name, company, email, visiting, date, signature, reason } = body
 
-      if (!company || !visiting || !signature) {
+      if (!company || !visiting || !signature || !name) {
         return new Response(JSON.stringify({ error: 'Missing required fields' }), {
-          headers: { 'Content-Type': 'application/json' },
-          status: 400
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
         })
       }
 
@@ -21,13 +21,14 @@ export const onRequest = async ({ request, env }: { request: Request, env: Recor
           company,
           person_visited: visiting,
           reason: reason || '',
-          metadata: { email },
+          metadata: { name, email },
           created_by: signature,
           type: 'onboard'
         }
       ])
 
       if (error) {
+        console.error("Supabase Insert Error:", error)
         return new Response(JSON.stringify({ error: error.message }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' }
@@ -44,6 +45,41 @@ export const onRequest = async ({ request, env }: { request: Request, env: Recor
         headers: { 'Content-Type': 'application/json' }
       })
     }
+  }
+
+  if (request.method === 'GET') {
+    const { data, error } = await supabase
+      .from('logs')
+      .select('*')
+      .order('timestamp', { ascending: false })
+
+    if (error) {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
+  if (request.method === 'DELETE') {
+    const url = new URL(request.url)
+    const id = url.searchParams.get('id')
+
+    if (id) {
+      await supabase.from('logs').delete().eq('id', id)
+    } else {
+      await supabase.from('logs').delete().neq('id', '')
+    }
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
   }
 
   return new Response('Method not allowed', { status: 405 })
