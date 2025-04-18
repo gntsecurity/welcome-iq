@@ -65,7 +65,7 @@ export default function OrgConfigPage() {
     }
 
     if (res.ok && result.success) {
-      alert('Team saved to Supabase!')
+      alert('Everything has been updated successfully.')
     } else {
       const msg = typeof result.error === 'string' ? result.error : 'Failed to save employee list.'
       alert(`Error: ${msg}`)
