@@ -1,6 +1,6 @@
 export default function HeaderDesktop() {
   return (
-    <header className="hidden md:flex items-center justify-between px-10 py-4 border-b bg-white/80 backdrop-blur-xl shadow-sm">
+    <header className="hidden md:flex items-center justify-between px-10 py-4 bg-gray-50 border-b border-gray-200 shadow-sm">
       <a href="/" className="flex items-center gap-3">
         <img src="/logo.png" alt="Welcome-IQ Logo" className="h-7 w-auto" />
         <span className="text-lg font-semibold text-gray-900 tracking-tight">Welcome-IQ</span>
