@@ -3,18 +3,27 @@
   "short_name": "WelcomeIQ",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
   "orientation": "portrait",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "scope": "/",
+  "description": "Contractor onboarding and site access platform built for modern security compliance.",
   "icons": [
     {
-      "src": "/icon-76x76.png",
-      "sizes": "76x76",
-      "type": "image/png"
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon-120x120.png",
-      "sizes": "120x120",
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-180x180.png",
+      "sizes": "180x180",
       "type": "image/png"
     },
     {
@@ -23,19 +32,13 @@
       "type": "image/png"
     },
     {
-      "src": "/icon-180x180.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512x512.png",
-      "sizes": "512x512",
+      "src": "/icon-120x120.png",
+      "sizes": "120x120",
       "type": "image/png"
     }
-  ]
+  ],
+  "screenshots": [],
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false
 }
