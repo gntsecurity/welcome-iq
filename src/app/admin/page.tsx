@@ -5,12 +5,28 @@ import { motion } from 'framer-motion'
 import HeaderDesktop from '../../components/HeaderDesktop'
 import FooterDesktop from '../../components/FooterDesktop'
 
+type Log = {
+  timestamp: string
+  created_by: string
+}
+
 export default function AdminDashboard() {
+  const [logs, setLogs] = useState<Log[]>([])
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    fetch('/api/logs')
+      .then((res) => res.json())
+      .then((data) => setLogs(data || []))
+      .catch(console.error)
+
     setMounted(true)
   }, [])
+
+  const today = new Date().toISOString().split('T')[0]
+  const logsToday = logs.filter((log) => log.timestamp.startsWith(today))
+  const onsiteCutoff = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString()
+  const recentLogs = logs.filter((log) => log.timestamp > onsiteCutoff)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white text-gray-900 font-sans flex flex-col">
@@ -34,12 +50,11 @@ export default function AdminDashboard() {
             </div>
 
             <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card title="Contractors Today" value="17" />
-              <Card title="Agreements Signed" value="241" />
-              <Card title="Current Visitors On-Site" value="3" />
+              <Card title="Contractors Today" value={logsToday.length.toString()} />
+              <Card title="Agreements Signed" value={logs.length.toString()} />
+              <Card title="Current Visitors On-Site" value={recentLogs.length.toString()} />
               <Card title="Org Configuration" value="✓" link="/org" />
               <Card title="View Logs" value="Open" link="/logs" />
-              <Card title="Manage Branding" value="Customize" link="/org" />
             </section>
           </motion.div>
         )}
@@ -50,15 +65,7 @@ export default function AdminDashboard() {
   )
 }
 
-function Card({
-  title,
-  value,
-  link
-}: {
-  title: string
-  value: string
-  link?: string
-}) {
+function Card({ title, value, link }: { title: string; value: string; link?: string }) {
   const content = (
     <div className="p-6 rounded-2xl bg-white shadow-lg border border-gray-100 hover:shadow-xl transition flex flex-col justify-between h-full">
       <div className="text-sm text-gray-500 mb-2">{title}</div>
