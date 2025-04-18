@@ -20,54 +20,48 @@ export default function LandingPage() {
   if (isMobile) return null
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-gray-950 text-white font-sans overflow-hidden">
       <HeaderDesktop />
 
-      <main className="relative flex-grow overflow-hidden px-6 md:px-12 py-20">
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-gray-50 to-white">
-          <div className="absolute inset-0 bg-[url('/bg-grid.svg')] bg-top bg-no-repeat bg-contain opacity-20" />
-        </div>
+      {/* BACKGROUND ANIMATION LAYER */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-950 to-black opacity-90" />
+        <div className="absolute -top-32 -left-32 h-[600px] w-[600px] rounded-full bg-blue-600 opacity-10 blur-3xl animate-pulse-slow" />
+        <div className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-indigo-400 opacity-10 blur-2xl animate-float" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.04] bg-[size:40px_40px]" />
+      </div>
 
+      <main className="flex-grow px-6 md:px-12 py-28 flex flex-col items-center text-center relative z-10">
         <motion.div
-          className="relative z-10 max-w-6xl mx-auto bg-white/80 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-3xl px-12 py-20 text-center space-y-10"
           initial={{ opacity: 0, y: 30, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="max-w-5xl space-y-10"
         >
-          <div className="space-y-4">
-            <motion.span
-              className="inline-block text-xs font-semibold tracking-wider text-blue-700 bg-blue-100 rounded-full px-3 py-1 uppercase"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-            >
-              Contractor Access • Enterprise-grade Security
-            </motion.span>
+          <motion.h1
+            className="text-5xl md:text-6xl font-extrabold tracking-tight leading-tight"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          >
+            Welcome-IQ
+          </motion.h1>
 
-            <motion.h1
-              className="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-            >
-              Welcome-IQ
-            </motion.h1>
-
-            <motion.p
-              className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-            >
-              The trusted platform for secure contractor onboarding, site check-ins, and safety compliance. Designed for manufacturing, defense, logistics, and high-security enterprise operations.
-            </motion.p>
-          </div>
+          <motion.p
+            className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            Enterprise-grade contractor onboarding, security compliance, and site access visibility
+            — engineered for serious operations, trusted by high-risk industries.
+          </motion.p>
 
           <motion.div
-            className="flex flex-col sm:flex-row justify-center gap-4 pt-6"
+            className="flex flex-wrap justify-center gap-4 pt-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
           >
             <a
               href="/onboard"
@@ -83,14 +77,14 @@ export default function LandingPage() {
             </a>
             <a
               href="/org"
-              className="text-blue-600 border border-blue-200 hover:border-blue-300 hover:text-blue-700 font-semibold px-6 py-3 rounded-xl text-sm transition"
+              className="text-blue-400 border border-blue-500 hover:border-blue-400 hover:text-blue-300 font-semibold px-6 py-3 rounded-xl text-sm transition"
             >
-              Organization Settings
+              Org Settings
             </a>
           </motion.div>
 
-          <div className="pt-6 text-xs text-gray-400 tracking-wide">
-            Built for Angstrom Fiber Englewood · Powered by Supabase + Cloudflare Workers
+          <div className="pt-8 text-xs text-gray-600 tracking-wide">
+            Built for Angstrom Fiber Englewood · Supabase + Cloudflare Workers
           </div>
         </motion.div>
       </main>
