@@ -6,7 +6,6 @@ export const onRequest = async ({ request, env }: { request: Request, env: Recor
   if (request.method === 'POST') {
     try {
       const body = await request.json()
-
       const { company, visiting, reason, email, date, signature } = body
 
       if (!company || !visiting || !signature) {
@@ -28,19 +27,24 @@ export const onRequest = async ({ request, env }: { request: Request, env: Recor
         }
       ])
 
-      if (error) throw error
+      if (error) {
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        })
+      }
 
       return new Response(JSON.stringify({ success: true }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 200
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
       })
     } catch (e) {
-      return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 500
+      return new Response(JSON.stringify({ error: 'Unexpected server error' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
       })
     }
   }
 
-  return new Response('Method Not Allowed', { status: 405 })
+  return new Response('Method not allowed', { status: 405 })
 }
